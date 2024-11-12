@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @map("_id")
+  email         String   @unique
+  name          String?
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  Session Session[]
+  Account Account[]
+  // Patient Patient[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @map("_id")
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id           String    @id @map("_id")
+  accountId    String
+  providerId   String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  expiresAt    DateTime?
+  password     String?
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+
+  @@map("verification")
+}
+
+
+model Patient {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName     String
+  firstName    String
+  middleName   String?
+  dateOfBirth  DateTime?
+  barangay     String
+  municipality String
+  province     String
+  
+  @@map("patient")
+
+}
+// model Patient {
+//   id            String   @id @map("_id")
+//   userId        String
+//   fname         String?
+//   mname         String?
+//   lname         String?
+//   dob           String?
+//   barangay      String?
+//   municipality  String?
+//   province      String?
+//   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   image         String?
+
+
+
+//   @@map("patient")
+// }
+

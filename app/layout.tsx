@@ -1,5 +1,9 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import Navbar from "./navbar/page";
+import { Toaster } from "@/components/ui/toaster";
+
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,13 +21,19 @@ export const metadata = {
   description: "Local Health Center Patient System Records",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }
+  : Readonly<{
+    children: React.ReactNode;
+  }>
+  
+) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Navbar />
         {children}
+        <Toaster />
+
       </body>
     </html>
   );

@@ -47,7 +47,8 @@ export default function SignIn() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <div className="flex items-center justify-center mt-10">
+  <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
         <CardDescription>
@@ -98,6 +99,8 @@ export default function SignIn() {
         </p>
       </CardFooter>
     </Card>
+    </div>
+  
 
   )
 }

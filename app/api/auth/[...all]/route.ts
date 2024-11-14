@@ -9,9 +9,8 @@ const ajProtectedPOST = async (req: NextRequest) => {
   
   const { email } = await req.clone().json();
 
-  // Since `arcjet` is removed, we will directly call the auth handler.
-  // Perform email validation if needed, or handle it within the `auth` logic
   return betterAuthHandlers.POST(req);
+  
 }
 
 export { ajProtectedPOST as POST };

@@ -10,8 +10,5 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false
   },
-
-    advanced: {
-        cookiePrefix: "bearer_token"
-    }
+ 
 })

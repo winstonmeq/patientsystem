@@ -38,3 +38,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to save patient data' }, { status: 500 })
   }
 }
+
+
+// GET /api/patient/
+export async function GET() {
+  try {
+    const patients = await prisma.patient.findMany()
+    return NextResponse.json(patients)
+  } catch (error) {
+    console.error("Error fetching patients:", error)
+    return NextResponse.error()
+  }
+}
+

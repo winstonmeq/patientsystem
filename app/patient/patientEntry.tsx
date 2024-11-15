@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 
-export default function PatientEntry({ onClose }: { onClose: () => void }) {
+export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () => void, onSaveSuccess: () => void }) {
 
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [formData, setFormData] = useState({
@@ -47,6 +47,7 @@ export default function PatientEntry({ onClose }: { onClose: () => void }) {
 
       if (response.ok) {
         console.log('Patient data saved successfully')
+        onSaveSuccess() // Notify the parent component (PatientTable) to reload data
         onClose() // Close the form or reset as needed
       } else {
         console.error('Failed to save patient data')

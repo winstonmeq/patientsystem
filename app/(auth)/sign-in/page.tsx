@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod"
-
+import { useState } from "react";
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,10 @@ import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
+
+  const [isLoading, setIsLoading] = useState(false);
+
+
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
@@ -23,6 +27,7 @@ export default function SignIn() {
   })
 
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
+    
     const { email, password } = values;
     const { data, error } = await authClient.signIn.email({
       email,
@@ -30,6 +35,8 @@ export default function SignIn() {
       callbackURL: "/patient",
     }, {
       onRequest: () => {
+        setIsLoading(true);
+
         toast({
           title: "Please wait...",
         })
@@ -42,6 +49,8 @@ export default function SignIn() {
         toast({
           title: "Invalid Username/Password!",
         })
+        setIsLoading(false);
+
       },
     });
   }
@@ -85,7 +94,7 @@ export default function SignIn() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">Submit</Button>
+            <Button loading={isLoading} className="w-full" type="submit">Submit</Button>
           </form>
         </Form>
       </CardContent>

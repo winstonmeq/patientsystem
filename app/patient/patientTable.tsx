@@ -19,7 +19,7 @@ interface Patient {
   firstName: string
   lastName: string
   middleName: string
-  birth: string
+  dateOfBirth: string
   barangay: string
   municipality: string
   province: string
@@ -129,7 +129,7 @@ export default function PatientTable() {
               <TableCell>{patient.firstName}</TableCell>
               <TableCell>{patient.lastName}</TableCell>
               <TableCell>{patient.middleName}</TableCell>
-              <TableCell>{patient.birth}</TableCell>
+              <TableCell>{new Date(patient.dateOfBirth).toLocaleDateString()}</TableCell>
               <TableCell>{patient.barangay}</TableCell>
               <TableCell>{patient.municipality}</TableCell>
               <TableCell>{patient.province}</TableCell>

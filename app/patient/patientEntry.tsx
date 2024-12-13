@@ -8,13 +8,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 
+
 export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () => void, onSaveSuccess: () => void }) {
 
   const [date, setDate] = useState<Date | undefined>(undefined)
+
   const [formData, setFormData] = useState({
     lastName: '',
     firstName: '',
-    middleName: '',
+    middleName: '', 
+    dateOfBirth: '',   
     barangay: '',
     municipality: '',
     province: ''
@@ -33,17 +36,19 @@ export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () =
 
     const patientData = {
       ...formData,
-      dateOfBirth: date ? format(date, "yyyy-MM-dd") : null
+      // dateOfBirth: date ? format(date, "yyyy-MM-dd") : null
     }
 
     try {
-      const response = await fetch('/api/patient/', {
+      const response = await fetch('/api/patient', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(patientData)
       })
+
+      console.log(patientData)
 
       if (response.ok) {
         console.log('Patient data saved successfully')
@@ -82,7 +87,7 @@ export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () =
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Popover>
+                {/* <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
@@ -100,7 +105,16 @@ export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () =
                       initialFocus
                     />
                   </PopoverContent>
-                </Popover>
+                </Popover> */}
+                
+                <Input
+                      type="date"
+                      id="dateOfBirth"
+                      onChange={handleChange}
+                      value={formData.dateOfBirth}
+                    />
+              
+
               </div>
               <div className="space-y-2">
                 <Label htmlFor="barangay">Barangay</Label>

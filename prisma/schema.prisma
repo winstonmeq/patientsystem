@@ -78,6 +78,16 @@ model Patient {
   @@map("patient")
 
 }
+
+model Item {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+
+  @@map("items")
+}
+
+
 // model Patient {
 //   id            String   @id @map("_id")
 //   userId        String

@@ -29,9 +29,6 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    console.log("Received data:", data);
-
-
     return NextResponse.json({ message: 'Patient saved successfully', patient }, { status: 201 })
   } catch (error) {
     console.error('Error saving patient data:', error)

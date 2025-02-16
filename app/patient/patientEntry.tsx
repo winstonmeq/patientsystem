@@ -7,11 +7,19 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
+import DateInput from "./date"; // Adjust path if needed
 
 
-export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () => void, onSaveSuccess: () => void }) {
+export default function PatientEntry({ onClose, onSaveSuccess, userId }: { onClose: () => void, onSaveSuccess: () => void, userId: string }) {
 
   const [date, setDate] = useState<Date | undefined>(undefined)
+
+  const barangays = ["Del Carmen", "Poblacion", "Labuo", "Kamarahan"];
+  const municipalities = ["President Roxas", "Matalam", "Magpet", "Antipas"];
+
+  const [selectedDate, setSelectedDate] = useState("");
+
+ 
 
   const [formData, setFormData] = useState({
     lastName: '',
@@ -19,8 +27,9 @@ export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () =
     middleName: '', 
     dateOfBirth: '',   
     barangay: '',
-    municipality: '',
-    province: ''
+    municipality: 'President Roxas',
+    province: 'Cotabato',
+    userId:userId
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +39,20 @@ export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () =
       [id]: value
     }))
   }
+
+  const handleDropdownChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+    console.log("Selected Date:", date); // Or perform other actions with the date
+    setFormData((prev) => ({ ...prev, ['dateOfBirth']: date }));
+
+  };
+
+
+
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -87,45 +110,68 @@ export default function PatientEntry({ onClose, onSaveSuccess }: { onClose: () =
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                {/* <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`w-full justify-start text-left font-normal ${!date && "text-muted-foreground"}`}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover> */}
-                
-                <Input
-                      type="date"
-                      id="dateOfBirth"
-                      onChange={handleChange}
-                      value={formData.dateOfBirth}
-                    />
+              <DateInput onChange={handleDateChange} value={selectedDate} />
               
 
               </div>
+
+
+
               <div className="space-y-2">
-                <Label htmlFor="barangay">Barangay</Label>
-                <Input id="barangay" placeholder="Enter barangay" value={formData.barangay} onChange={handleChange} required />
-              </div>
+                  <Label htmlFor="barangay">Barangay</Label>
+                  <select
+                    id="barangay"
+                    name="barangay" // Important: Match this to your formData key
+                    value={formData.barangay}
+
+                    onChange={(event) => handleDropdownChange("barangay", event.target.value)}
+
+                    className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200" // Add styling as needed
+                    required
+                  >
+                    <option value="" disabled>Select Barangay</option> {/* Placeholder option */}
+                    {barangays.map((barangay) => (
+                      <option key={barangay} value={barangay}>
+                        {barangay}
+                      </option>
+                    ))}
+                  </select>
+                  </div>
+
+
+
+
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="municipality">Municipality</Label>
-                <Input id="municipality" placeholder="Enter municipality" value={formData.municipality} onChange={handleChange} required />
+
+              
+              <div className="space-y-2">
+                  <Label htmlFor="barangay">Municipality</Label>
+                  <select
+                    id="municipality"
+                    name="municipality" // Important: Match this to your formData key
+                    value={formData.municipality}
+
+                    onChange={(event) => handleDropdownChange("municipality", event.target.value)}
+
+                    className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200" // Add styling as needed
+                    required
+                  >
+                    <option value="" disabled>Select Municipality</option> {/* Placeholder option */}
+                    {municipalities.map((items) => (
+                      <option key={items} value={items}>
+                        {items}
+                      </option>
+                    ))}
+                  </select>
+                  </div>
+
+
               </div>
+
+
+
               <div className="space-y-2">
                 <Label htmlFor="province">Province</Label>
                 <Input id="province" placeholder="Enter province" value={formData.province} onChange={handleChange} required />

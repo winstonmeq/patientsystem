@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { UserPlus } from 'lucide-react'
+import Link from "next/link"
 
 // Define the patient type
 interface Patient {
@@ -25,7 +26,10 @@ interface Patient {
   province: string
 }
 
-export default function PatientTable() {
+
+
+
+export default function PatientTable({userId}:{userId:string}) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [patients, setPatients] = useState<Patient[]>([]) // Apply the Patient type here
   const [loading, setLoading] = useState(true) // Track loading state
@@ -35,27 +39,14 @@ export default function PatientTable() {
   const fetchPatients = async () => {
     try {
       const response = await fetch('/api/patient/')
-      if (response.ok && response.body) {
-        const reader = response.body.getReader() // Use `getReader()` after confirming `response.body` is not undefined
-        const decoder = new TextDecoder()
-        let done = false
-        let chunk = ''
-        let progressInterval = 0
+      if (response.ok) {
 
-        // Simulate progress bar updates while fetching data
-        while (!done) {
-          const { value, done: readerDone } = await reader.read() // Properly handle the reader result
-          done = readerDone
-          if (value) { // Ensure value is not undefined or null
-            chunk += decoder.decode(value)
-          }
-          progressInterval += 10
-          setProgress(Math.min(progressInterval, 100)) // Simulating loading progress
-          await new Promise((resolve) => setTimeout(resolve, 100)) // Adjust delay for a smoother progress
-        }
+        const responseData = await response.json()
 
-        const data: Patient[] = JSON.parse(chunk) // Parse the final response
-        setPatients(data)
+        console.log(responseData.result)
+        
+        setPatients(responseData.result)
+
       } else {
         console.error("Failed to fetch patients")
       }
@@ -63,7 +54,7 @@ export default function PatientTable() {
       console.error("Error fetching patients:", error)
     } finally {
       setLoading(false) // Stop loading once the fetch is done
-      setProgress(100) // Complete the progress bar
+      
     }
   }
 
@@ -107,7 +98,7 @@ export default function PatientTable() {
           <DialogHeader>
             <DialogTitle>Add New Patient</DialogTitle>
           </DialogHeader>
-          <PatientEntry onClose={() => setIsModalOpen(false)} onSaveSuccess={handleSave} />
+          <PatientEntry onClose={() => setIsModalOpen(false)} onSaveSuccess={handleSave} userId={userId} />
         </DialogContent>
       </Dialog>
 
@@ -121,6 +112,8 @@ export default function PatientTable() {
             <TableHead>Barangay</TableHead>
             <TableHead>Municipality</TableHead>
             <TableHead>Province</TableHead>
+            <TableHead>Action</TableHead>
+
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -133,6 +126,7 @@ export default function PatientTable() {
               <TableCell>{patient.barangay}</TableCell>
               <TableCell>{patient.municipality}</TableCell>
               <TableCell>{patient.province}</TableCell>
+              <TableCell><Link href={`/patient/${patient.id}`}>Add</Link></TableCell>
             </TableRow>
           ))}
         </TableBody>

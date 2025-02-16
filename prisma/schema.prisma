@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id            String   @id @map("_id")
+  id            String   @id @map("_id") 
   email         String   @unique
   name          String?
   emailVerified Boolean
@@ -24,7 +24,8 @@ model User {
 
   Session Session[]
   Account Account[]
-  // Patient Patient[]
+  Patient Patient[]
+  Medical Medical[]
 
   @@map("user")
 }
@@ -69,15 +70,45 @@ model Patient {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   lastName     String
   firstName    String
+  userId       String
   middleName   String?
   dateOfBirth  DateTime?
   barangay     String
   municipality String
   province     String
-  
+  createdAt    DateTime @default(now()) // Automatically set on creation
+  updatedAt    DateTime @updatedAt       // Automatically updated on each update
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medical      Medical[]
   @@map("patient")
 
 }
+
+
+model Medical {
+  id           String   @id  @default(auto()) @map("_id") @db.ObjectId
+  userId       String   
+  patientId    String   @db.ObjectId
+  age          Int
+  date         DateTime
+  wt           Float
+  ht           Float
+  temp         Float
+  bp           String
+  pr1          String
+  pr2          String
+  s            String
+  a            String
+  p            String
+  createdAt    DateTime @default(now()) // Automatically set on creation
+  updatedAt    DateTime @updatedAt       // Automatically updated on each update
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  patient      Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+@@map("medical")
+
+}
+
 
 model Item {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -88,21 +119,4 @@ model Item {
 }
 
 
-// model Patient {
-//   id            String   @id @map("_id")
-//   userId        String
-//   fname         String?
-//   mname         String?
-//   lname         String?
-//   dob           String?
-//   barangay      String?
-//   municipality  String?
-//   province      String?
-//   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   image         String?
-
-
-
-//   @@map("patient")
-// }
 

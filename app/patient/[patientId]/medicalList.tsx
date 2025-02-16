@@ -53,8 +53,6 @@ const MedicalList = ({userId}:{userId:string}) => {
 
 
 
-  useEffect(() => {
-    if (!patientId) return;
 
     const fetchPatientData = async () => {
       try {
@@ -62,12 +60,22 @@ const MedicalList = ({userId}:{userId:string}) => {
         if (!response.ok) throw new Error("Failed to fetch patient data");
         const responseData = await response.json();
         setPatient(responseData);
+
+        console.log(responseData)
+
+        setMedicals(responseData.medical)
+
+
       } catch (err) {
         setError((err as Error).message);
       } finally {
         setLoading(false);
       }
     };
+
+    
+  useEffect(() => {
+    if (!patientId) return;
 
     fetchPatientData();
   }, [patientId]);
@@ -78,53 +86,57 @@ const MedicalList = ({userId}:{userId:string}) => {
 
 
 
-// Fetch patients from the API endpoint
-  const fetchMedicals = async () => {
-    try {
-      const response = await fetch(`/api/medical/${patientId}`)
+// // Fetch patients from the API endpoint
+//   const fetchMedicals = async () => {
+//     try {
+//       const response = await fetch(`/api/medical/${patientId}`)
 
-      if (response.ok) {
+//       if (response.ok) {
 
-        const responseData = await response.json()
+//         const responseData = await response.json()
 
-        console.log(responseData)
+//         console.log(responseData)
         
-        setMedicals(responseData.result)
+//         setMedicals(responseData.result)
 
-      } else {
-        console.error("Failed to fetch patients")
-      }
-    } catch (error) {
-      console.error("Error fetching patients:", error)
-    } finally {
-      setLoading(false) // Stop loading once the fetch is done
+//       } else {
+//         console.error("Failed to fetch patients")
+//       }
+//     } catch (error) {
+//       console.error("Error fetching patients:", error)
+//     } finally {
+//       setLoading(false) // Stop loading once the fetch is done
       
-    }
-  }
+//     }
+//   }
 
-  useEffect(() => {
-    fetchMedicals()
-  }, [])
+//   useEffect(() => {
+//     // fetchMedicals()
+//   }, [])
 
 
     // Handle save and reload patient data
     const handleSave = async () => {
       // After saving the new patient, fetch the updated list
-      await fetchMedicals()
+      // await fetchMedicals()
+      await fetchPatientData()
       setIsModalOpen(false) // Close the modal after saving
     }
 
 
     const handleDelete = async (id: string) => {
+      const isConfirmed = window.confirm("Are you sure you want to delete this item?");
+      
+      if (!isConfirmed) return; // Stop execution if the user cancels
+    
       try {
         const response = await fetch(`/api/medical/${id}`, {
           method: "DELETE",
         });
-  
+    
         if (response.ok) {
-  
-          fetchMedicals()
-          const responseData = await response.json()
+          fetchPatientData();
+          const responseData = await response.json();
           console.log(responseData.message);
         }
       } catch (error) {
@@ -134,6 +146,7 @@ const MedicalList = ({userId}:{userId:string}) => {
         );
       }
     };
+    
 
 
   
@@ -150,9 +163,26 @@ const MedicalList = ({userId}:{userId:string}) => {
         <Card className="w-full max-w-6xl shadow-lg rounded-lg mb-4">
           <CardHeader>
             <CardTitle className="text-center text-xl font-semibold">
+             
+            <div className="px-2">
+       
+              <Link href={'/patient'}>   <Button className="flex flex-row justify-end mb-4">Back  </Button></Link>
+        
+          </div> 
+
+          <div className="flex flex-row justify-center">
               Individual Treatment Record
+              </div>
+
+
             </CardTitle>
           </CardHeader>
+
+         
+         
+        
+
+       
           <CardContent>
             <div className="space-y-6">
               <div>
@@ -210,14 +240,11 @@ const MedicalList = ({userId}:{userId:string}) => {
           <CardContent>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild>
-          <div>
+         
           <Button className="mb-4">
             <UserPlus className="mr-2 h-4 w-4" /> Add Medical 
           </Button>
-          <Button className="mb-4">
-              <Link href={'/patient'}>Back</Link>
-          </Button>
-          </div>
+          
         
         </DialogTrigger>
         <DialogContent>
@@ -263,8 +290,8 @@ const MedicalList = ({userId}:{userId:string}) => {
                 <TableCell>{items.s}</TableCell>
                 <TableCell>{items.a}</TableCell>
                 <TableCell>{items.p}</TableCell>
-                <TableCell><Link href={`/medical/${items.id}`}>Edit</Link></TableCell>
-                <TableCell><Button onClick={() => {handleDelete(items.id)}}>Delete</Button></TableCell>
+                <TableCell><div className="flex gap-1"><Button><Link href={`/medical/${items.id}`}>Edit</Link></Button><Button onClick={() => {handleDelete(items.id)}}>X</Button></div></TableCell>
+                
               </TableRow>
             ))
           ):(null)}

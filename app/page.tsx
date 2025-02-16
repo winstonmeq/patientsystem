@@ -1,6 +1,6 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink } from "@/components/ui/navigation-menu";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -8,8 +8,9 @@ export default function Home() {
   
 
       {/* Centered Welcome Text */}
-      <div className="flex items-center justify-center flex-grow">
-        <h1 className="text-white text-3xl">Welcome</h1>
+      <div className="flex flex-col items-center justify-center gap-4 flex-grow">
+        <h1 className="text-white text-3xl">Welcome Back</h1>
+        <Link href={"/patient"}><Button>Continue</Button></Link>
       </div>
     </div>
   );

@@ -15,6 +15,10 @@ export async function GET(req: Request, { params }: { params: { patientId: strin
 
     const patient = await prisma.patient.findUnique({
       where: { id: patientId },
+      
+      include: {
+        medical: true
+      }
     });
 
     if (!patient) {

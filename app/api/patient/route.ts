@@ -45,7 +45,11 @@ export async function GET() {
  
 
   try {
-    const patients = await prisma.patient.findMany()
+    const patients = await prisma.patient.findMany({
+      include: {
+        medical: true
+      }
+    })
     
 
     return NextResponse.json({result:patients})

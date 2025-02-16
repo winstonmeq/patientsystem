@@ -16,7 +16,7 @@ const Page = async () => {
  
 
   if (!session) {
-    return redirect('/')
+    return redirect('/sign-in')
   }
 
   const userId = session?.user.id

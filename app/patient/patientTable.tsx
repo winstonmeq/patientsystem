@@ -89,11 +89,15 @@ export default function PatientTable({userId}:{userId:string}) {
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <div className="flex flex-row justify-between">
         <DialogTrigger asChild>
           <Button className="mb-4">
             <UserPlus className="mr-2 h-4 w-4" /> Add Patient
           </Button>
         </DialogTrigger>
+          <Link href={"/reports"}><Button>Reports</Button></Link>
+        </div>
+       
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Patient</DialogTitle>

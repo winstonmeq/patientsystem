@@ -71,7 +71,7 @@ const RecallListPage = () => {
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-4">
         {/* Top Navigation -  Simplified for brevity*/}
         <header className="flex items-center justify-end px-6 mb-6">
           <div className="flex items-center space-x-4">
@@ -152,7 +152,7 @@ const RecallListPage = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[50px]">
+                    <TableHead className="w-[30px]">
                       <Checkbox />
                     </TableHead>
                     <TableHead>Name</TableHead>

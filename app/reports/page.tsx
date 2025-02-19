@@ -206,7 +206,7 @@ const ReportsPage = () => {
                               })
                               .map((record, index) => (
                                 <li key={index}>
-                                  {format(new Date(record.date), "MM/dd/yyyy")}{" "}
+                                  {/* {format(new Date(record.date), "MM/dd/yyyy")}{" "} */}
                                   - {record.s}
                                 </li>
                               ))}

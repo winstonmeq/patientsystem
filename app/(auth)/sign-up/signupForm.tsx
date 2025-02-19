@@ -16,12 +16,12 @@ import { toast } from "@/hooks/use-toast";
 
 export default function SignUp() {
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-    },
+    // resolver: zodResolver(formSchema),
+    // defaultValues: {
+    //   name: "",
+    //   email: "",
+    //   password: "",
+    // },
   })
 
 

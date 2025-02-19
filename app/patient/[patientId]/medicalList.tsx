@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,31 +54,31 @@ const MedicalList = ({userId}:{userId:string}) => {
 
 
 
-    const fetchPatientData = async () => {
-      try {
-        const response = await fetch(`/api/patient/${patientId}`);
-        if (!response.ok) throw new Error("Failed to fetch patient data");
-        const responseData = await response.json();
-        setPatient(responseData);
+  const fetchPatientData = useCallback(async () => { // Use useCallback
+    try {
+      const response = await fetch(`/api/patient/${patientId}`);
+      if (!response.ok) throw new Error("Failed to fetch patient data");
+      const responseData = await response.json();
+      setPatient(responseData);
 
-        console.log(responseData)
+      console.log(responseData)
 
-        setMedicals(responseData.medical)
+      setMedicals(responseData.medical)
 
 
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [patientId]); // Dependencies of fetchPatientData
 
     
   useEffect(() => {
     if (!patientId) return;
 
     fetchPatientData();
-  }, [patientId]);
+  }, [patientId, fetchPatientData]);
 
 
 

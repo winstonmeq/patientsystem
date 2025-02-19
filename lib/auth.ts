@@ -10,5 +10,12 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false
   },
+  // config: {
+  //   // ... other configurations
+  //   origins: [
+  //     'http://localhost:3000',
+  //     'http://192.168.1.9:3000' // Replace with your IP
+  //   ],
+  // },
  
 })

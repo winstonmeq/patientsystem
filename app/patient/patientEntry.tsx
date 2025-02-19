@@ -14,7 +14,9 @@ export default function PatientEntry({ onClose, onSaveSuccess, userId }: { onClo
 
   const [date, setDate] = useState<Date | undefined>(undefined)
 
-  const barangays = ["Del Carmen", "Poblacion", "Labuo", "Kamarahan"];
+  const barangays = ["Del Carmen", "Poblacion", "Labuo", "Kamarahan", "Greenhill", "Camasi", "Idaoman", "Mabuhay", "Tuael", "Ilustre", "Cabangbangan",
+                    "Sagcungan", "Alegria", "Lomonay", "La Esperanza", "New Cebu","Kimahuring", "Sarayan", 'Kisupaan',"Salat", "Datu Sundungan", "Datu Inda","Lama-lama", "Bata-bato","Sarayan"
+  ];
   const municipalities = ["President Roxas", "Matalam", "Magpet", "Antipas"];
 
   const [selectedDate, setSelectedDate] = useState("");

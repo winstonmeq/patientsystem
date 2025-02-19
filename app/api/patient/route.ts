@@ -9,7 +9,9 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     const {lastName, firstName, middleName, barangay, municipality, province, dateOfBirth, userId } = data
-    if (!lastName || !firstName || !middleName || !barangay || !municipality || !province || !dateOfBirth || !userId ) {
+
+    
+    if (!lastName || !firstName  || !barangay || !municipality || !province || !dateOfBirth || !userId ) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 

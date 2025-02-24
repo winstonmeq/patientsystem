@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
+import { useState } from "react"
 
 import { Textarea } from "@/components/ui/textarea"
 
@@ -28,6 +29,7 @@ const formSchema = z.object({
 export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patientId }: { onClose: () => void, onSaveSuccess: () => void, userId: string, patientId: any }) {
 
   const { toast } = useToast(); // ✅ Initialize toast function
+  const [loading, setLoading] = useState(true);
 
 
 
@@ -51,6 +53,9 @@ export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patie
   });
   
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
+      setLoading(true)
+    
     try {
       console.log("Submitting medical data:", values);
   
@@ -71,6 +76,7 @@ export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patie
   
         onSaveSuccess?.(); // Ensure function exists before calling
         onClose?.(); // Ensure function exists before calling
+        setLoading(false)
       } else {
         const errorText = await response.text();
         console.error("Failed to save medical data:", errorText);

@@ -1,8 +1,7 @@
 
 
 import React from 'react'
-import PatientEntry from './patientEntry'
-import PatientTable from './patientTable'
+import PatientEntry from './patientUpdate'
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -23,7 +22,7 @@ const Page = async () => {
 
   return (
     
-    <div><PatientTable userId={userId} /></div>
+    <div className='w-full'><PatientEntry userId={userId} /></div>
   )
 }
 

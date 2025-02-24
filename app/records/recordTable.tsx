@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import PatientEntry from "./patientEntry";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { UserPlus } from 'lucide-react';
 import Link from "next/link";
@@ -14,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 
 interface Patient {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   middleName: string;
@@ -22,9 +21,25 @@ interface Patient {
   barangay: string;
   municipality: string;
   province: string;
+  medical: {
+    id: string;
+    patientId: string;
+    userId: string;
+    age: string;
+    date: string;
+    wt: string;
+    ht: string;
+    temp: string;
+    bp: string;
+    pr1: string;
+    pr2: string;
+    s: string;
+    a: string;
+    p: string;
+  }[];
 }
 
-export default function PatientTable({ userId }: { userId: string }) {
+export default function RecordTable({ userId }: { userId: string }) {
 
   
   const router = useRouter();
@@ -43,11 +58,11 @@ export default function PatientTable({ userId }: { userId: string }) {
 
 
 
-  const fetchPatients =  useCallback(async (currentPage:number) => {
+  const fetchPatients = useCallback(async (currentPage: number) => {
     setLoading(true);
     try {
       const response = await fetch(`/api/patient?page=${currentPage}&limit=${rowsPerPage}`, {
-        cache: "force-cache", // Ensures caching
+        cache: "no-store", // Ensures caching
       });
       if (response.ok) {
         const responseData = await response.json();
@@ -62,9 +77,6 @@ export default function PatientTable({ userId }: { userId: string }) {
       setLoading(false);
     }
   },[]);
-
-
- 
 
   useEffect(() => {
     fetchPatients(currentPage);
@@ -83,7 +95,16 @@ export default function PatientTable({ userId }: { userId: string }) {
   
 
   const filterData = async () => {
+
+    if (!searchTerm?.trim()) {
+      alert('Please enter a search term');
+      return;
+    }
+
+
     setLoading(true);
+
+   
 
     try {
       const response = await fetch(`/api/patient/search?lastName=${searchTerm}`);
@@ -116,16 +137,10 @@ export default function PatientTable({ userId }: { userId: string }) {
         </div>
       )}
     <CardContent>
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      
         <div className="flex flex-row justify-between mb-4">
           <div className="flex flex-row gap-4">
-          <DialogTrigger asChild>
-            <Button>
-              <UserPlus className="mr-2 h-4 w-4" /> Add Patient
-            </Button>
-          </DialogTrigger>
-
-          <Input
+            <Input
             type="text"
             placeholder="Search by Last Name"
             value={searchTerm}
@@ -139,15 +154,7 @@ export default function PatientTable({ userId }: { userId: string }) {
 
         </div>
 
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Patient</DialogTitle>
-          </DialogHeader>
-          <PatientEntry onClose={() => setIsModalOpen(false)} onSaveSuccess={handleSave} userId={userId} />
        
-       
-        </DialogContent>
-      </Dialog>
 
       <Table>
         <TableHeader>
@@ -157,8 +164,12 @@ export default function PatientTable({ userId }: { userId: string }) {
             <TableHead>Middle Name</TableHead>
             <TableHead>Birth Date</TableHead>
             <TableHead>Barangay</TableHead>
-            <TableHead>Municipality</TableHead>
-            <TableHead>Province</TableHead>
+            <TableHead>Sign/Symptoms</TableHead>
+            <TableHead>Diagnose</TableHead>
+            <TableHead>Treatment</TableHead>
+            <TableHead>Remarks</TableHead>
+
+
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -170,15 +181,29 @@ export default function PatientTable({ userId }: { userId: string }) {
               <TableCell>{patient.middleName}</TableCell>
               <TableCell>{new Date(patient.dateOfBirth).toLocaleDateString()}</TableCell>
               <TableCell>{patient.barangay}</TableCell>
-              <TableCell>{patient.municipality}</TableCell>
-              <TableCell>{patient.province}</TableCell>
+              <TableCell>{patient.medical?.map((index)=>(
+                <div key={index.id}>
+                  {index.s}
+                </div>
+              )) || "No medical data"}
+              </TableCell>
+              <TableCell>{patient.medical?.map((index)=>(
+                <div key={index.id}>
+                  {index.a}
+                </div>
+              )) || "No medical data"}
+              </TableCell>
+              <TableCell>{patient.medical?.map((index)=>(
+                <div key={index.id}>
+                  {index.p}
+                </div>
+              )) || "No medical data"}
+              </TableCell>
+
+              <TableCell>Remarks</TableCell>
               <TableCell>
                 <div className="flex gap-2">
-                {/* <Link href={`/patient/${patient.id}`}><Button>Medical</Button></Link>
-                <Button variant={'outline'} asChild><Link href={`/patient/update/${patient.id}`}>Edit</Link></Button> */}
-               {/* <Button onClick={() => router.push(`/patient/${patient.id}?page=${currentPage}`)}>Medical</Button> */}
-               <Button variant="outline" onClick={() => router.push(`/patient/update/${patient.id}?page=${currentPage}`)}>Edit</Button>
-               
+                    <Button onClick={() => router.push(`/patient/${patient.id}?page=${currentPage}`)}>Medical</Button>              
                 </div>
               </TableCell>
           

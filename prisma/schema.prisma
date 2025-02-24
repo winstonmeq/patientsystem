@@ -73,6 +73,8 @@ model Patient {
   userId       String
   middleName   String?
   dateOfBirth  DateTime?
+  purok        String?
+  mobile       String?
   barangay     String
   municipality String
   province     String

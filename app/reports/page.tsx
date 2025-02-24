@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,48 +44,99 @@ interface Patient {
   }[];
 }
 
+interface ApiResponse {
+  result: Patient[];
+  totalrows: number;
+}
+
+
 const ReportsPage = () => {
   const { patientId } = useParams();
   const [patient, setPatient] = useState<Patient[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+    const [totalPages, setTotalPages] = useState(1);
+  
   const [filteredPatients, setFilteredPatients] = useState<Patient[] | null>(
     null
   );
   const tableRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchPatientData = async () => {
-      try {
-        const response = await fetch("/api/patient");
-        if (!response.ok) throw new Error("Failed to fetch patient data");
+
+
+  const fetchPatients = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/reports?page=${currentPage}&limit=${rowsPerPage}`);
+      if (response.ok) {
         const responseData = await response.json();
         setPatient(responseData.result);
         setFilteredPatients(responseData.result);
-      } catch (err) {
-        setError((err as Error).message);
+
+        setTotalPages(Math.ceil(responseData.totalrows / rowsPerPage)); // Assuming API returns total count
+      } else {
+        console.error("Failed to fetch patients");
+      }
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    } finally {
+      setLoading(false);
+    }
+  },[currentPage]);
+
+  useEffect(() => {
+    fetchPatients();
+  }, [currentPage, fetchPatients]); // Refetch when page changes
+
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+
+
+
+  const handleFilter = async () => {
+    setLoading(true);
+
+    try {
+      const formattedStartDate = startDate ? startDate.toString().split("T")[0] : undefined;
+      const formattedEndDate = endDate ? endDate.toString().split("T")[0] : undefined;
+
+      try {
+        const response = await fetch(`/api/reports?startDate=${startDate}&endDate=${endDate}`);
+        if (response.ok) {
+          const responseData = await response.json();
+          setPatient(responseData.result);
+          setFilteredPatients(responseData.result);
+  
+          setTotalPages(Math.ceil(responseData.totalrows / rowsPerPage)); // Assuming API returns total count
+        } else {
+          console.error("Failed to fetch patients");
+        }
+      } catch (error) {
+        console.error("Error fetching patients:", error);
       } finally {
         setLoading(false);
       }
-    };
-    fetchPatientData();
-  }, []);
 
-  const handleFilter = () => {
-    if (!patient) return;
-    const filtered = patient.filter((item) =>
-      item.medical.some((record) => {
-        const recordDate = new Date(record.date);
-        return (
-          (!startDate || recordDate >= new Date(startDate)) &&
-          (!endDate || recordDate <= new Date(endDate))
-        );
-      })
-    );
-    setFilteredPatients(filtered);
+
+
+
+    } catch (err) {
+      setError("Failed to load patients.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+
+
+  
 
   const handlePrint = () => {
     const printContent = document.createElement("div");
@@ -133,20 +184,24 @@ const ReportsPage = () => {
   if (loading) return <p className="text-center">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
+
+
+  const index = 0;
+
   return (
-    <div className="flex flex-col justify-center items-center p-4 ">
+    <div className="py-10 ">
       {patient ? (
-        <Card className="w-full max-w-6xl shadow-lg rounded-lg">
+        <Card className="w-full shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-center text-xl font-semibold">
-              <div className="px-2">
+              {/* <div className="px-2">
                 <Link href={"/patient"}>
                   {" "}
                   <Button className="flex flex-row justify-end mb-4">
                     Back{" "}
                   </Button>
                 </Link>
-              </div>
+              </div> */}
 
               <div className="flex flex-row justify-center">Report Pages</div>
             </CardTitle>
@@ -169,22 +224,30 @@ const ReportsPage = () => {
                   onChange={(e) => setEndDate(e.target.value)}
                 />
               </div>
+              <div className="flex gap-4 mt-6">
               <Button onClick={handleFilter}>Filter</Button>
               <Button onClick={handlePrint}>Print</Button>
+              </div>
+             
             </div>
             <div ref={tableRef}>
               <Table>
                 <TableHeader>
                   <TableRow>
+                  <TableHead>#</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>DoB</TableHead>
                     <TableHead>Address</TableHead>
+                    <TableHead>Check Up Date</TableHead>
+                    <TableHead>Sign/Symptoms</TableHead>
                     <TableHead>Diagnose</TableHead>
+                    <TableHead>Treament</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPatients?.map((items) => (
                     <TableRow key={items.id}>
+                      <TableCell>{index + 1}</TableCell>
                       <TableCell>
                         {items.lastName}, {items.firstName}
                       </TableCell>
@@ -193,36 +256,59 @@ const ReportsPage = () => {
                       </TableCell>
                       <TableCell>{items.barangay}</TableCell>
                       <TableCell>
-                        {items.medical.length > 0 ? (
-                          <ul>
-                            {items.medical
-                              .filter((record) => {
-                                const recordDate = new Date(record.date);
-                                return (
-                                  (!startDate ||
-                                    recordDate >= new Date(startDate)) &&
-                                  (!endDate || recordDate <= new Date(endDate))
-                                );
-                              })
-                              .map((record, index) => (
-                                <li key={index}>
-                                  {/* {format(new Date(record.date), "MM/dd/yyyy")}{" "} */}
-                                  - {record.s}
-                                </li>
-                              ))}
-                          </ul>
-                        ) : (
-                          "No record"
-                        )}
+                        {items.medical?.map((index)=>(
+                          <div key={index.id}>
+                            {new Date(index.date).toLocaleDateString()}
+                          </div>
+                        )) || "No data"}
                       </TableCell>
+                      <TableCell className="w-48">
+                      {items.medical?.map((index)=>(
+                          <div key={index.id}>
+                            {index.s}
+                          </div>
+                        )) || 'no data'}
+                      </TableCell>
+
+                      <TableCell className="w-48">
+                      {items.medical?.map((index)=>(
+                          <div key={index.id}>
+                            {index.a}
+                          </div>
+                        )) || 'no data'}
+                      </TableCell>
+                      <TableCell className="w-48">
+                      {items.medical?.map((index)=>(
+                          <div key={index.id}>
+                            {index.p}
+                          </div>
+                        )) || 'no data'}
+                      </TableCell>
+
+
+
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+
+           
+              
+
             </div>
           </CardContent>
         </Card>
       ) : null}
+
+<div className="flex justify-center mt-4 space-x-4">
+                    <Button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+                          Previous
+                        </Button>
+                        <span>Page {currentPage} of {totalPages}</span>
+                        <Button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+                          Next
+                        </Button>
+                    </div>
     </div>
   );
 };

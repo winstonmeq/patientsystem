@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import Link from "next/link";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { UserPlus } from "lucide-react";
 import MedicalEntryForm from "@/app/medical/medicalEntry";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useRouter, useParams, useSearchParams } from "next/navigation";
+import MedicalUpdatePage from "@/app/medical/medicalUpdate";
 
 interface Patient {
   id: string;
@@ -44,15 +45,22 @@ interface Medical {
 }
 
 const MedicalList = ({userId}:{userId:string}) => {
+
+  const searchParams = useSearchParams();
+const currentPage = searchParams.get("page") || "1"; // Get current page from URL
+
+
   const { patientId } = useParams();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen2, setIsModalOpen2] = useState(false)
+
   const [medicals, setMedicals] = useState<Medical[]>([]) // Apply the Patient type here
 
 
-
+const router = useRouter()
 
   const fetchPatientData = useCallback(async () => { // Use useCallback
     try {
@@ -79,40 +87,6 @@ const MedicalList = ({userId}:{userId:string}) => {
 
     fetchPatientData();
   }, [patientId, fetchPatientData]);
-
-
-
-
-
-
-
-// // Fetch patients from the API endpoint
-//   const fetchMedicals = async () => {
-//     try {
-//       const response = await fetch(`/api/medical/${patientId}`)
-
-//       if (response.ok) {
-
-//         const responseData = await response.json()
-
-//         console.log(responseData)
-        
-//         setMedicals(responseData.result)
-
-//       } else {
-//         console.error("Failed to fetch patients")
-//       }
-//     } catch (error) {
-//       console.error("Error fetching patients:", error)
-//     } finally {
-//       setLoading(false) // Stop loading once the fetch is done
-      
-//     }
-//   }
-
-//   useEffect(() => {
-//     // fetchMedicals()
-//   }, [])
 
 
     // Handle save and reload patient data
@@ -158,16 +132,18 @@ const MedicalList = ({userId}:{userId:string}) => {
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 ">
+    <div className="py-10 ">
       {patient ? (
-        <Card className="w-full max-w-6xl shadow-lg rounded-lg mb-4">
+        <Card className="w-full  shadow-lg rounded-lg mb-4">
           <CardHeader>
             <CardTitle className="text-center text-xl font-semibold">
              
             <div className="px-2">
        
-              <Link href={'/patient'}>   <Button className="flex flex-row justify-end mb-4">Back  </Button></Link>
-        
+            <Link href={`/records?page=${currentPage}`}>
+        <Button className="flex flex-row justify-end mb-4">Back</Button>
+      </Link>
+              
           </div> 
 
           <div className="flex flex-row justify-center">
@@ -178,11 +154,7 @@ const MedicalList = ({userId}:{userId:string}) => {
             </CardTitle>
           </CardHeader>
 
-         
-         
-        
-
-       
+             
           <CardContent>
             <div className="space-y-6">
               <div>
@@ -231,7 +203,7 @@ const MedicalList = ({userId}:{userId:string}) => {
       )}
 
 
-<Card className="w-full max-w-6xl shadow-lg rounded-lg">
+<Card className="w-full shadow-lg rounded-lg">
           <CardHeader>
             <CardTitle className="text-center text-xl font-semibold">
               Medical Record
@@ -276,8 +248,7 @@ const MedicalList = ({userId}:{userId:string}) => {
         </TableHeader>
         <TableBody>
 
-          {medicals ? (
-            medicals.map((items) => (
+          {medicals?.map((items) => (
               <TableRow key={items.id}>
                   <TableCell>{new Date(items.date).toLocaleDateString()}</TableCell>
                 <TableCell>{items.age}</TableCell>
@@ -290,11 +261,34 @@ const MedicalList = ({userId}:{userId:string}) => {
                 <TableCell>{items.s}</TableCell>
                 <TableCell>{items.a}</TableCell>
                 <TableCell>{items.p}</TableCell>
-                <TableCell><div className="flex gap-1"><Button><Link href={`/medical/${items.id}`}>Edit</Link></Button><Button onClick={() => {handleDelete(items.id)}}>X</Button></div></TableCell>
+                <TableCell><div className="flex gap-1">
+                  {/* <Button><Link href={`/medical/${items.id}`}>Edit</Link></Button> */}
+                  
+                  <Dialog open={isModalOpen2} onOpenChange={setIsModalOpen2}>
+        <DialogTrigger asChild>
+         
+          <Button className="mb-4">
+             Edit
+          </Button>
+          
+        
+        </DialogTrigger>
+        <DialogContent>
+      
+                  <DialogHeader>
+                  <DialogTitle>Update Medical Record</DialogTitle>                
+        
+           
+          </DialogHeader>
+          <MedicalUpdatePage medicalId={items.id} />
+        </DialogContent>
+      </Dialog>
+                  
+                  <Button onClick={() => {handleDelete(items.id)}}>X</Button></div></TableCell>
                 
               </TableRow>
             ))
-          ):(null)}
+        }
 
 
 

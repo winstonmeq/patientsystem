@@ -145,7 +145,7 @@ const ReportsPage = () => {
         <head>
           <title>Print Report</title>
           <style>
-            @page { size: A4; margin: 20mm; }
+            @page { size: A4; margin: 10mm; }
             body { font-family: Arial, sans-serif; text-align: center; width: 800px; margin: auto; }
             h1 { font-size: 16px; margin-bottom: 5px; }
             h2 { font-size: 14px; margin-bottom: 15px; }
@@ -186,7 +186,6 @@ const ReportsPage = () => {
 
 
 
-  const index = 0;
 
   return (
     <div className="py-10 ">
@@ -245,50 +244,72 @@ const ReportsPage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredPatients?.map((items) => (
-                    <TableRow key={items.id}>
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
-                        {items.lastName}, {items.firstName}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(items.dateOfBirth).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{items.barangay}</TableCell>
-                      <TableCell>
-                        {items.medical?.map((index)=>(
-                          <div key={index.id}>
-                            {new Date(index.date).toLocaleDateString()}
-                          </div>
-                        )) || "No data"}
-                      </TableCell>
-                      <TableCell className="w-48">
-                      {items.medical?.map((index)=>(
-                          <div key={index.id}>
-                            {index.s}
-                          </div>
-                        )) || 'no data'}
-                      </TableCell>
-
-                      <TableCell className="w-48">
-                      {items.medical?.map((index)=>(
-                          <div key={index.id}>
-                            {index.a}
-                          </div>
-                        )) || 'no data'}
-                      </TableCell>
-                      <TableCell className="w-48">
-                      {items.medical?.map((index)=>(
-                          <div key={index.id}>
-                            {index.p}
-                          </div>
-                        )) || 'no data'}
-                      </TableCell>
+                  {filteredPatients?.map((items, index) => 
 
 
+                  {
 
-                    </TableRow>
-                  ))}
+
+                    const startIndex = (currentPage - 1) * rowsPerPage; // Calculate the start index
+                    const rowNumber = startIndex + index + 1; // Calculate the current row number
+
+                    console.log(currentPage + "," + index  + ","+ startIndex)
+
+                    return (
+                    
+                              
+               
+
+<TableRow key={items.id}>
+  <TableCell>{rowNumber}</TableCell>
+  <TableCell>
+    {items.lastName}, {items.firstName}
+  </TableCell>
+  <TableCell>
+    {new Date(items.dateOfBirth).toLocaleDateString()}
+  </TableCell>
+  <TableCell>{items.barangay}</TableCell>
+  <TableCell>
+    {items.medical?.map((index)=>(
+      <div key={index.id}>
+        {new Date(index.date).toLocaleDateString()}
+      </div>
+    )) || "No data"}
+  </TableCell>
+  <TableCell className="w-48">
+  {items.medical?.map((index)=>(
+      <div key={index.id}>
+        {index.s}
+      </div>
+    )) || 'no data'}
+  </TableCell>
+
+  <TableCell className="w-48">
+  {items.medical?.map((index)=>(
+      <div key={index.id}>
+        {index.a}
+      </div>
+    )) || 'no data'}
+  </TableCell>
+  <TableCell className="w-48">
+  {items.medical?.map((index)=>(
+      <div key={index.id}>
+        {index.p}
+      </div>
+    )) || 'no data'}
+  </TableCell>
+
+
+
+</TableRow>
+
+                    
+                    )
+                  }
+               
+                  
+                  
+                  )}
                 </TableBody>
               </Table>
 

@@ -19,6 +19,7 @@ const medicalSchema = z.object({
   s: z.string(),
   a: z.string(),
   p: z.string(),
+  remarks: z.string()
 });
 
 // Handle POST request to save medical data
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
         s: validatedData.s,
         a: validatedData.a,
         p: validatedData.p,
+        remarks: validatedData.remarks
       },
     });
 

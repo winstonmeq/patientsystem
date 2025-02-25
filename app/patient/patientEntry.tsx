@@ -27,7 +27,9 @@ export default function PatientEntry({ onClose, onSaveSuccess, userId }: { onClo
     lastName: '',
     firstName: '',
     middleName: '', 
-    dateOfBirth: '',   
+    dateOfBirth: '',  
+    purok:'',
+    mobile: '', 
     barangay: '',
     municipality: 'President Roxas',
     province: 'Cotabato',
@@ -116,11 +118,19 @@ export default function PatientEntry({ onClose, onSaveSuccess, userId }: { onClo
               
 
               </div>
-
-
+              <div className="space-y-2">
+                <Label htmlFor="mobile">Mobile</Label>
+                <Input id="mobile" placeholder="Mobile Number" value={formData.mobile} onChange={handleChange} />
+              </div>
 
               <div className="space-y-2">
-                  <Label htmlFor="barangay">Barangay</Label>
+                <Label htmlFor="purok">Purok</Label>
+                <Input id="purok" placeholder="Enter purok" value={formData.purok} onChange={handleChange} />
+              </div>
+
+              <div className="space-y-2">
+
+               <Label htmlFor="barangay">Barangay</Label>
                   <select
                     id="barangay"
                     name="barangay" // Important: Match this to your formData key
@@ -138,7 +148,7 @@ export default function PatientEntry({ onClose, onSaveSuccess, userId }: { onClo
                       </option>
                     ))}
                   </select>
-                  </div>
+              </div>
 
 
 

@@ -102,6 +102,7 @@ model Medical {
   s            String
   a            String
   p            String
+  remarks      String?
   createdAt    DateTime @default(now()) // Automatically set on creation
   updatedAt    DateTime @updatedAt       // Automatically updated on each update
   user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)

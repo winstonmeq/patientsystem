@@ -29,6 +29,7 @@ const formSchema = z.object({
   s: z.string().min(0, "S is required"),
   a: z.string().min(0, "A is required"),
   p: z.string().min(0, "P is required"),
+  remarks: z.string().min(0, "Remark is required"),
 });
 
 
@@ -53,6 +54,7 @@ const MedicalUpdatePage = ({medicalId}: {medicalId:string  }) => {
       s: "",
       a: "",
       p: "",
+      remarks: ""
     },
   });
 
@@ -78,6 +80,7 @@ const MedicalUpdatePage = ({medicalId}: {medicalId:string  }) => {
           s: responseData.data?.s || "",
           a: responseData.data?.a || "",
           p: responseData.data?.p || "",
+          remarks: responseData.data?.remarks || ""
         });
       } catch (err) {
         console.error(err);
@@ -304,6 +307,20 @@ const MedicalUpdatePage = ({medicalId}: {medicalId:string  }) => {
               <FormLabel>P</FormLabel>
               <FormControl>
                 <Textarea rows={3} placeholder="P" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+       <FormField
+          control={form.control}
+          name="remarks"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Remarks</FormLabel>
+              <FormControl>
+                <Textarea rows={3} placeholder="remarks" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

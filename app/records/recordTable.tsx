@@ -36,6 +36,7 @@ interface Patient {
     s: string;
     a: string;
     p: string;
+    remarks:string
   }[];
 }
 
@@ -182,25 +183,30 @@ export default function RecordTable({ userId }: { userId: string }) {
               <TableCell>{new Date(patient.dateOfBirth).toLocaleDateString()}</TableCell>
               <TableCell>{patient.barangay}</TableCell>
               <TableCell>{patient.medical?.map((index)=>(
-                <div key={index.id}>
+                <div className="border-b border-solid border-1px pt-1" key={index.id}>
                   {index.s}
                 </div>
               )) || "No medical data"}
               </TableCell>
               <TableCell>{patient.medical?.map((index)=>(
-                <div key={index.id}>
+                <div className="border-b border-solid border-1px pt-1" key={index.id}>
                   {index.a}
                 </div>
               )) || "No medical data"}
               </TableCell>
               <TableCell>{patient.medical?.map((index)=>(
-                <div key={index.id}>
+                <div className="border-b border-solid border-1px pt-1" key={index.id}>
                   {index.p}
                 </div>
               )) || "No medical data"}
               </TableCell>
 
-              <TableCell>Remarks</TableCell>
+              <TableCell>{patient.medical?.map((index)=>(
+                <div className="border-b border-solid border-1px pt-1" key={index.id}>
+                  {index.remarks}
+                </div>
+              )) || "No medical data"}
+              </TableCell>
               <TableCell>
                 <div className="flex gap-2">
                     <Button onClick={() => router.push(`/patient/${patient.id}?page=${currentPage}`)}>Medical</Button>              

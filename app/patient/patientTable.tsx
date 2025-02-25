@@ -47,7 +47,7 @@ export default function PatientTable({ userId }: { userId: string }) {
     setLoading(true);
     try {
       const response = await fetch(`/api/patient?page=${currentPage}&limit=${rowsPerPage}`, {
-        cache: "force-cache", // Ensures caching
+        cache: "no-store", // Ensures caching
       });
       if (response.ok) {
         const responseData = await response.json();
@@ -75,6 +75,8 @@ export default function PatientTable({ userId }: { userId: string }) {
    useEffect(() => {
     router.replace(`?page=${currentPage}`);
   }, [currentPage, router]);
+
+
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);

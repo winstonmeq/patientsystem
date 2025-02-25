@@ -24,6 +24,8 @@ const formSchema = z.object({
   s: z.string().min(0, "S is required"),
   a: z.string().min(0, "A is required"),
   p: z.string().min(0, "P is required"),
+  remarks: z.string().min(0, "Remark is required"),
+
 })
 
 export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patientId }: { onClose: () => void, onSaveSuccess: () => void, userId: string, patientId: any }) {
@@ -49,6 +51,7 @@ export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patie
       s: "",
       a: "",
       p: "",
+      remarks:""
     },
   });
   
@@ -100,35 +103,7 @@ export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patie
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      {/* <div className="flex flex-row gap-2">
-      <FormField
-          control={form.control}
-          name="userId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>User ID</FormLabel>
-              <FormControl>
-                <Input placeholder="User ID" {...field} readOnly />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="patientId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Patient ID</FormLabel>
-              <FormControl>
-                <Input placeholder="Patient ID" {...field} readOnly/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-          </div> */}
-       
+            
         <div className="flex flex-row gap-2">
 
         <FormField
@@ -305,6 +280,20 @@ export default function MedicalEntryForm({ onClose, onSaveSuccess, userId, patie
               <FormLabel>P</FormLabel>
               <FormControl>
               <Textarea rows={3} placeholder="P" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+          <FormField
+          control={form.control}
+          name="remarks"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Remarks</FormLabel>
+              <FormControl>
+              <Textarea rows={3} placeholder="remarks" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
